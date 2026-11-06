@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="An offline-friendly personal project planner. Your board stays in this browser.">
+  <title>Project Planner — Mohammed Mazgour</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1220;--panel:#111c2e;--line:#283a54;--text:#eef4ff;--muted:#a6b6ca;--mint:#80f0c0}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{width:min(1050px,calc(100% - 32px));margin:auto}.bar{border-bottom:1px solid #ffffff16;padding:16px 0}.bar a{color:var(--mint);text-decoration:none;font-weight:700}.head{padding:44px 0 25px}.eyebrow{color:var(--mint);font:700 .75rem ui-monospace,monospace;letter-spacing:.15em}.head h1{font-size:clamp(2rem,6vw,3.4rem);letter-spacing:-.04em;margin:8px 0}.head p{color:var(--muted);max-width:700px}.notice{border:1px solid #355044;background:#12251f;color:#c5ead9;padding:12px 15px;border-radius:10px;font-size:.87rem;margin:20px 0}.form{display:grid;grid-template-columns:1fr auto;gap:10px;margin:23px 0}.form input{min-width:0;border:1px solid var(--line);border-radius:10px;padding:12px;background:#101b2b;color:var(--text);font:inherit}.button{border:1px solid var(--mint);background:var(--mint);color:#07140d;border-radius:10px;padding:10px 17px;font:700 .95rem system-ui;cursor:pointer}.board{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0 60px}.column{border:1px solid var(--line);background:#0e1827;border-radius:14px;padding:13px;min-height:220px}.column h2{font-size:1rem;margin:2px 3px 13px}.count{color:var(--muted);font-size:.8rem;margin-left:6px}.task{background:var(--panel);border:1px solid #2a3d58;border-radius:10px;padding:12px;margin:8px 0}.task p{margin:0 0 10px;overflow-wrap:anywhere}.task-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.task select{background:#0d1625;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:6px}.remove{margin-left:auto;color:#ffb9b9;background:transparent;border:0;cursor:pointer;padding:6px}.empty{color:#8292a8;font-size:.85rem;padding:6px 3px}.foot{border-top:1px solid #ffffff15;padding:18px 0;color:var(--muted);font-size:.82rem}.foot a{color:var(--mint)}:focus-visible{outline:3px solid #f4d35e;outline-offset:3px}@media(max-width:700px){.board{grid-template-columns:1fr}.column{min-height:100px}}
+  </style>
+</head>
+<body>
+  <header class="bar"><div class="wrap"><a href="../index.html">← Mohammed Mazgour · Portfolio</a></div></header>
+  <main class="wrap">
+    <section class="head"><div class="eyebrow">PROJECT 02 · PERSONAL PRODUCTIVITY</div><h1>Project Planner</h1><p>Turn a big idea into a few next steps. Add tasks, move them across the board, and keep the plan in this browser.</p><div class="notice"><strong>Local storage:</strong> Your task names are saved in this browser on this device. This page has no account, analytics, or server sync. Avoid entering passwords or sensitive information.</div></section>
+    <form class="form" id="task-form"><label class="sr-only" for="task-title" style="position:absolute;left:-9999px">New task</label><input id="task-title" maxlength="120" placeholder="Add a small next step…" autocomplete="off" required><button class="button" type="submit">Add task</button></form>
+    <section class="board" id="board" aria-label="Project task board"></section>
+    <footer class="foot">A small, client-side demo by Mohammed Mazgour. <a href="../index.html">Back to portfolio</a></footer>
+  </main>
+  <script>
+    (()=>{
+      const KEY='mm-project-planner-v1';
+      const states=[['todo','To do'],['doing','In progress'],['done','Done']];
+      const board=document.getElementById('board');
+      const form=document.getElementById('task-form');
+      const input=document.getElementById('task-title');
+      let tasks=[];
+      try{const saved=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(saved))tasks=saved.filter(t=>t&&typeof t.id==='string'&&typeof t.title==='string'&&states.some(s=>s[0]===t.status));}catch{}
+      function save(){try{localStorage.setItem(KEY,JSON.stringify(tasks));}catch{alert('The browser could not save this board. Check your browser storage settings.');}}
+      function render(){
+        board.replaceChildren();
+        for(const [status,label] of states){
+          const section=document.createElement('section');section.className='column';
+          const heading=document.createElement('h2');heading.textContent=label;
+          const items=tasks.filter(t=>t.status===status);const count=document.createElement('span');count.className='count';count.textContent=String(items.length);heading.append(count);section.append(heading);
+          if(!items.length){const empty=document.createElement('p');empty.className='empty';empty.textContent='Nothing here yet.';section.append(empty);}
+          for(const item of items){
+            const card=document.createElement('article');card.className='task';const title=document.createElement('p');title.textContent=item.title;card.append(title);
+            const actions=document.createElement('div');actions.className='task-actions';
+            const select=document.createElement('select');select.setAttribute('aria-label','Move task: '+item.title);
+            for(const [value,text] of states){const option=document.createElement('option');option.value=value;option.textContent=text;option.selected=value===item.status;select.append(option);}
+            select.addEventListener('change',()=>{item.status=select.value;save();render();});
+            const remove=document.createElement('button');remove.className='remove';remove.type='button';remove.textContent='Remove';remove.setAttribute('aria-label','Remove task: '+item.title);remove.addEventListener('click',()=>{tasks=tasks.filter(t=>t.id!==item.id);save();render();});
+            actions.append(select,remove);card.append(actions);section.append(card);
+          }
+          board.append(section);
+        }
+      }
+      form.addEventListener('submit',event=>{event.preventDefault();const title=input.value.trim();if(!title)return;tasks.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),title,status:'todo'});save();input.value='';render();input.focus();});
+      render();
+    })();
+  </script>
+</body>
+</html>
