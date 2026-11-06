@@ -12,9 +12,9 @@ I learn by making small, useful projects and improving them step by step. My foc
 
 ## Projects
 
-- **[Personal Security Checklist](https://mohammed-mazgour.github.io/projects/security-checklist.html)** — a local browser checklist for everyday account and device security. It does not scan systems or send data to a server.
-- **[Project Planner](https://mohammed-mazgour.github.io/projects/project-planner.html)** — a small offline-friendly board for tracking personal projects. Data stays in the browser on the device where it was entered.
-- **[Portfolio website](https://mohammed-mazgour.github.io)** — a simple overview of my work and interests.
+- **[Personal Security Checklist](https://mohammed-mazgour.github.io/mohammed-mazgour/projects/security-checklist.html)** — a local browser checklist for everyday account and device security. It does not scan systems or send data to a server.
+- **[Project Planner](https://mohammed-mazgour.github.io/mohammed-mazgour/projects/project-planner.html)** — a small offline-friendly board for tracking personal projects. Data stays in the browser on the device where it was entered.
+- **[Portfolio website](https://mohammed-mazgour.github.io/mohammed-mazgour/)** — a simple overview of my work and interests.
 
 ## Principles
 
@@ -29,5 +29,5 @@ I learn by making small, useful projects and improving them step by step. My foc
 
 ## Links
 
-- Portfolio: [mohammed-mazgour.github.io](https://mohammed-mazgour.github.io)
+- Portfolio: [mohammed-mazgour.github.io](https://mohammed-mazgour.github.io/mohammed-mazgour/)
 - GitHub: [@mohammed-mazgour](https://github.com/mohammed-mazgour)
